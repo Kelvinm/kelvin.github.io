@@ -1,26 +1,866 @@
----
-layout: main
----
-
-{% for post in paginator.posts %}
-<article class="post">
-  {% if post.img %}
-    <a class="post-thumbnail" style="background-image: url('{{ "/assets/img/" | append: post.img | relative_url }}');" href="{{ post.url | relative_url }}"></a>
-  {% endif %}
-  <div class="post-content">
-    <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-    <p>{{ post.content | strip_html | truncatewords: 15 }}</p>
-    <span class="post-date">
-      {{ post.date | date: "%Y, %b %d" }}&nbsp;&nbsp;&nbsp;—&nbsp;
-    </span>
-    <span class="post-words">
-      {% capture words %}{{ post.content | number_of_words }}{% endcapture %}
-      {% unless words contains "-" %}
-        {{ words | plus: 250 | divided_by: 250 | append: " minute read" }}
-      {% endunless %}
-    </span>
-  </div>
-</article>
-{% endfor %}
-
-{% include pagination.html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelvin Malyar | Technology Executive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-ink: #1a1a1a;
+            --color-paper: #faf9f7;
+            --color-muted: #6b6b6b;
+            --color-accent: #2d4a3e;
+            --color-accent-light: #3d6a5e;
+            --color-rule: #e0dcd4;
+            --font-display: 'Instrument Serif', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: var(--color-paper);
+            color: var(--color-ink);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Header */
+        header {
+            padding: 2rem 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-rule);
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            letter-spacing: 0.02em;
+            color: var(--color-ink);
+            text-decoration: none;
+        }
+        
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            transition: color 0.2s ease;
+        }
+        
+        nav a:hover {
+            color: var(--color-ink);
+        }
+        
+        /* Hero */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+        
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            max-width: 900px;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 em {
+            font-style: italic;
+            color: var(--color-accent);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--color-muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .stats-inner {
+            display: flex;
+            gap: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--color-rule);
+            border-bottom: 1px solid var(--color-rule);
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--color-accent);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Branches section */
+        .branches {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+        
+        .section-label {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 3rem;
+        }
+        
+        .branches-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .branch-card {
+            background: white;
+            padding: 2.5rem;
+            border: 1px solid var(--color-rule);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .branch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--color-accent);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s ease;
+        }
+        
+        .branch-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .branch-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        
+        .branch-number {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            color: var(--color-accent);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        
+        .branch-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .branch-tagline {
+            font-size: 1rem;
+            color: var(--color-accent);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .branch-description {
+            color: var(--color-muted);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .branch-services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .service-tag {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            background: var(--color-paper);
+            padding: 0.375rem 0.75rem;
+            border-radius: 2px;
+            letter-spacing: 0.02em;
+        }
+        
+        .branch-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: var(--color-accent);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .branch-cta svg {
+            transition: transform 0.2s ease;
+        }
+        
+        .branch-card:hover .branch-cta svg {
+            transform: translateX(4px);
+        }
+        
+        /* Experience section */
+        .experience {
+            background: var(--color-ink);
+            color: white;
+            padding: 5rem 0;
+        }
+        
+        .experience-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .experience .section-label {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .experience .section-title {
+            color: white;
+            margin-bottom: 3rem;
+        }
+        
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .exp-item {
+            background: var(--color-ink);
+            padding: 2rem;
+        }
+        
+        .exp-company {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .exp-role {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .exp-highlight {
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+        
+        /* Expertise section */
+        .expertise {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+        
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        
+        .expertise-intro {
+            color: var(--color-muted);
+            line-height: 1.8;
+        }
+        
+        .expertise-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .expertise-item {
+            border-left: 2px solid var(--color-rule);
+            padding-left: 1.5rem;
+        }
+        
+        .expertise-item h4 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .expertise-item p {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            line-height: 1.6;
+        }
+        
+        /* Contact section */
+        .contact {
+            background: var(--color-accent);
+            color: white;
+            padding: 5rem 0;
+        }
+        
+        .contact-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .contact h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .contact p {
+            opacity: 0.85;
+            line-height: 1.7;
+        }
+        
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .contact-link {
+            font-size: 1.125rem;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0.85;
+            transition: opacity 0.2s ease;
+        }
+        
+        .contact-link:hover {
+            opacity: 1;
+        }
+        
+        /* Footer */
+        footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--color-rule);
+        }
+        
+        footer p {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 2.5rem 2.5rem 0;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-muted);
+            transition: color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--color-ink);
+        }
+        
+        .modal-body {
+            padding: 2rem 2.5rem 2.5rem;
+        }
+        
+        .modal h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-tagline {
+            color: var(--color-accent);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-description {
+            color: var(--color-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-services-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .modal-services {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .modal-service {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+        
+        .modal-service-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--color-paper);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+            font-size: 0.75rem;
+            margin-top: 0.125rem;
+        }
+        
+        .modal-service h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .modal-service p {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            line-height: 1.6;
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .branches-grid,
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .expertise-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .contact-inner {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .contact-links {
+                align-items: flex-start;
+            }
+            
+            .stats-inner {
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .header-inner {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav {
+                gap: 1.5rem;
+            }
+            
+            .expertise-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="#" class="logo">Kelvin Malyar</a>
+            <nav>
+                <a href="#services">Services</a>
+                <a href="#experience">Experience</a>
+                <a href="#expertise">Expertise</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <h1>Building <em>intelligent systems</em> for investment firms that need to move fast.</h1>
+        <p class="hero-subtitle">Technology executive specializing in AI/ML implementation, data platforms, and engineering leadership for hedge funds and wealth management firms.</p>
+    </section>
+    
+    <section class="stats-bar">
+        <div class="stats-inner">
+            <div class="stat">
+                <span class="stat-value">$650B+</span>
+                <span class="stat-label">Assets Under Management</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">10+</span>
+                <span class="stat-label">Years Leading Teams</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Tier-1 Investment Firms</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">12x</span>
+                <span class="stat-label">Platform Scale Growth</span>
+            </div>
+        </div>
+    </section>
+    
+    <section class="branches" id="services">
+        <p class="section-label">How I Work</p>
+        <h2 class="section-title">Two ways to engage</h2>
+        
+        <div class="branches-grid">
+            <div class="branch-card" onclick="openModal('execution')">
+                <span class="branch-number">01</span>
+                <h3>Execution</h3>
+                <p class="branch-tagline">I'll build it.</p>
+                <p class="branch-description">Hands-on consulting for firms that need production-grade AI systems, data platforms, and modern infrastructure. From architecture to deployment.</p>
+                <div class="branch-services">
+                    <span class="service-tag">AI/ML Implementation</span>
+                    <span class="service-tag">Data Platform Engineering</span>
+                    <span class="service-tag">Cloud Architecture</span>
+                    <span class="service-tag">LLM Applications</span>
+                </div>
+                <a href="#" class="branch-cta" onclick="event.preventDefault()">
+                    Learn more 
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 8h10M9 4l4 4-4 4"/>
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="branch-card" onclick="openModal('advisory')">
+                <span class="branch-number">02</span>
+                <h3>Advisory & Leadership</h3>
+                <p class="branch-tagline">I'll lead it.</p>
+                <p class="branch-description">Strategic technology leadership for organizations navigating transformation. Fractional CTO engagements, team building, and technology strategy.</p>
+                <div class="branch-services">
+                    <span class="service-tag">Fractional CTO</span>
+                    <span class="service-tag">Technology Strategy</span>
+                    <span class="service-tag">Team Transformation</span>
+                    <span class="service-tag">Due Diligence</span>
+                </div>
+                <a href="#" class="branch-cta" onclick="event.preventDefault()">
+                    Learn more 
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 8h10M9 4l4 4-4 4"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="experience" id="experience">
+        <div class="experience-inner">
+            <p class="section-label">Background</p>
+            <h2 class="section-title">Where I've built</h2>
+            
+            <div class="experience-grid">
+                <div class="exp-item">
+                    <p class="exp-company">Wells Fargo / Allspring</p>
+                    <p class="exp-role">Head of Technology</p>
+                    <p class="exp-highlight">Led portfolio optimization platform scaling from $500M to $6B AUM. Managed $200M project budget through enterprise migration and divestiture.</p>
+                </div>
+                <div class="exp-item">
+                    <p class="exp-company">Tudor Investments</p>
+                    <p class="exp-role">Head of Data Engineering</p>
+                    <p class="exp-highlight">Built corporate data platform enabling strategic pivot to systematic trading. Established data architecture serving global trading operations.</p>
+                </div>
+                <div class="exp-item">
+                    <p class="exp-company">Bank of America</p>
+                    <p class="exp-role">Senior Consultant</p>
+                    <p class="exp-highlight">Modeled complex structured instruments. Built pricing solutions that evolved into complete risk management systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="expertise" id="expertise">
+        <p class="section-label">Capabilities</p>
+        <h2 class="section-title">Core expertise</h2>
+        
+        <div class="expertise-grid">
+            <p class="expertise-intro">I specialize in the intersection of institutional finance and modern technology—building systems that handle the complexity, compliance, and scale that investment firms demand.</p>
+            
+            <div class="expertise-list">
+                <div class="expertise-item">
+                    <h4>AI/ML for Finance</h4>
+                    <p>Production LLM applications, document analysis, market regime detection, and research automation for investment workflows.</p>
+                </div>
+                <div class="expertise-item">
+                    <h4>Data Architecture</h4>
+                    <p>Enterprise data platforms, medallion architectures, real-time pipelines, and governance frameworks for regulated environments.</p>
+                </div>
+                <div class="expertise-item">
+                    <h4>Platform Engineering</h4>
+                    <p>Cloud migrations, infrastructure modernization, and scalable systems that grow with your business.</p>
+                </div>
+                <div class="expertise-item">
+                    <h4>Technology Leadership</h4>
+                    <p>Team building, engineering culture, vendor evaluation, and strategic roadmapping for technology organizations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="contact" id="contact">
+        <div class="contact-inner">
+            <div>
+                <h2>Let's talk.</h2>
+                <p>Whether you need hands-on execution or strategic leadership, I'm interested in working with firms that are serious about technology as a competitive advantage.</p>
+            </div>
+            <div class="contact-links">
+                <a href="mailto:kelvin.malyar@gmail.com" class="contact-link">
+                    kelvin.malyar@gmail.com
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 15L15 5M15 5H8M15 5v7"/>
+                    </svg>
+                </a>
+                <a href="https://linkedin.com/in/kelvin-malyar-9004562" class="contact-link" target="_blank">
+                    LinkedIn
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 15L15 5M15 5H8M15 5v7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>© 2025 Kelvin Malyar. All rights reserved.</p>
+        <p>New York Metro Area</p>
+    </footer>
+    
+    <!-- Execution Modal -->
+    <div class="modal-overlay" id="execution-modal" onclick="closeModal(event, 'execution')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'execution')">&times;</button>
+            <div class="modal-header">
+                <h2>Execution</h2>
+                <p class="modal-tagline">Hands-on consulting for production systems</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">When you need systems built, not just planned. I work directly with your team to architect and deliver production-grade solutions—from initial design through deployment and handoff.</p>
+                
+                <p class="modal-services-title">What I deliver</p>
+                <div class="modal-services">
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>AI/ML Implementation</h4>
+                            <p>Production LLM applications, document processing pipelines, market analysis systems, and research automation. Built for institutional requirements—not demos.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Data Platform Engineering</h4>
+                            <p>Enterprise data architectures, real-time pipelines, and analytics infrastructure. Medallion architectures, governance frameworks, and quality automation.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Cloud Architecture & Migration</h4>
+                            <p>AWS infrastructure design, legacy system modernization, and cloud-native transformations. Security-first approaches for regulated environments.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Portfolio & Risk Systems</h4>
+                            <p>Optimization platforms, risk management tools, and trading system components. Deep domain expertise in investment management workflows.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Advisory Modal -->
+    <div class="modal-overlay" id="advisory-modal" onclick="closeModal(event, 'advisory')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'advisory')">&times;</button>
+            <div class="modal-header">
+                <h2>Advisory & Leadership</h2>
+                <p class="modal-tagline">Strategic technology leadership</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Executive-level technology guidance for organizations navigating growth, transformation, or complexity. I bridge the gap between business objectives and technical execution.</p>
+                
+                <p class="modal-services-title">Engagement models</p>
+                <div class="modal-services">
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Fractional CTO</h4>
+                            <p>Part-time strategic technology leadership for organizations that need executive guidance without full-time commitment. Technology roadmaps, team structure, vendor strategy.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Technology Strategy</h4>
+                            <p>Strategic planning for technology investments, build-vs-buy decisions, and digital transformation initiatives. Grounded in operational reality.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Team Transformation</h4>
+                            <p>Building high-performing engineering organizations. Culture, process, hiring strategy, and leadership development for technology teams.</p>
+                        </div>
+                    </div>
+                    <div class="modal-service">
+                        <div class="modal-service-icon">→</div>
+                        <div>
+                            <h4>Technical Due Diligence</h4>
+                            <p>Technology assessment for M&A, investments, and partnerships. Deep technical evaluation with business context and risk analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openModal(type) {
+            document.getElementById(type + '-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(event, type) {
+            if (event.target === event.currentTarget || event.target.classList.contains('modal-close')) {
+                document.getElementById(type + '-modal').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html>
