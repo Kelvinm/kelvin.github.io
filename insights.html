@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights | Kelvin Malyar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-ink: #1a1a1a;
+            --color-paper: #faf9f7;
+            --color-muted: #6b6b6b;
+            --color-accent: #2d4a3e;
+            --color-accent-light: #3d6a5e;
+            --color-rule: #e0dcd4;
+            --font-display: 'Instrument Serif', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: var(--color-paper);
+            color: var(--color-ink);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Header */
+        header {
+            padding: 2rem 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-rule);
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            letter-spacing: 0.02em;
+            color: var(--color-ink);
+            text-decoration: none;
+        }
+        
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            transition: color 0.2s ease;
+        }
+        
+        nav a:hover,
+        nav a.active {
+            color: var(--color-ink);
+        }
+        
+        /* Page header */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 3rem;
+        }
+        
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            color: var(--color-muted);
+            font-size: 1.125rem;
+            max-width: 600px;
+        }
+        
+        /* Insights list */
+        .insights {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem;
+        }
+        
+        .insights-list {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .insight-card {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--color-rule);
+        }
+        
+        .insight-card:first-child {
+            border-top: 1px solid var(--color-rule);
+        }
+        
+        .insight-date {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .insight-card h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+        
+        .insight-card h2 a {
+            color: var(--color-ink);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .insight-card h2 a:hover {
+            color: var(--color-accent);
+        }
+        
+        .insight-excerpt {
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+        
+        /* Coming soon state */
+        .coming-soon {
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .coming-soon p {
+            color: var(--color-muted);
+            font-size: 1.125rem;
+        }
+        
+        /* Footer */
+        footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--color-rule);
+        }
+        
+        footer p {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header-inner {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav {
+                gap: 1.5rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="index.html" class="logo">Kelvin Malyar</a>
+            <nav>
+                <a href="index.html#services">Services</a>
+                <a href="index.html#experience">Experience</a>
+                <a href="index.html#expertise">Expertise</a>
+                <a href="insights.html" class="active">Insights</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="page-header">
+        <h1>Insights</h1>
+        <p>Observations on technology leadership, AI adoption, and building engineering organizations in financial services.</p>
+    </section>
+    
+    <section class="insights">
+        <div class="coming-soon">
+            <p>Writing coming soon.</p>
+        </div>
+        
+        <!-- Template for future posts:
+        <div class="insights-list">
+            <article class="insight-card">
+                <p class="insight-date">January 2025</p>
+                <h2><a href="#">Post Title Here</a></h2>
+                <p class="insight-excerpt">Brief excerpt or summary of the post goes here. Keep it to 2-3 sentences that capture the main point.</p>
+            </article>
+        </div>
+        -->
+    </section>
+    
+    <footer>
+        <p>© 2025 Kelvin Malyar. All rights reserved.</p>
+        <p>New York Metro Area</p>
+    </footer>
+</body>
+</html>
